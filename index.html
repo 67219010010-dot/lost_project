@@ -1,348 +1,487 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลอยกระทงออนไลน์</title>
-    <link href="https://googleapis.com" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Prompt', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ลอยกระทงออนไลน์</title>
 
-        body {
-            background: linear-gradient(to bottom, #070b19 0%, #16213e 55%, #0f3460 100%);
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        .moon {
-            position: fixed;
-            top: 30px;
-            right: 60px;
-            width: 80px;
-            height: 80px;
-            background: #fdfd96;
-            border-radius: 50%;
-            box-shadow: 0 0 40px #fdfd96, 0 0 80px #ffea79;
-            z-index: 1;
-            pointer-events: none;
-        }
+body {
+    background: linear-gradient(to bottom, #070b19 0%, #16213e 55%, #0f3460 100%);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .control-panel {
-            position: relative;
-            background: rgba(20, 30, 55, 0.88);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-            width: 90%;
-            max-width: 440px;
-            z-index: 50;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
+.moon {
+    position: fixed;
+    top: 30px;
+    right: 60px;
+    width: 80px;
+    height: 80px;
+    background: #fdfd96;
+    border-radius: 50%;
+    box-shadow: 0 0 40px #fdfd96, 0 0 80px #ffea79;
+    z-index: 1;
+    pointer-events: none;
+}
 
-        h1 {
-            text-align: center;
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
+.control-panel {
+    position: relative;
+    background: rgba(20,30,55,.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px 0 150px;
+    width: 90%;
+    max-width: 440px;
+    z-index: 50;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
 
-        .form-group {
-            margin-bottom: 12px;
-        }
+h1 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #f0f0f0;
-        }
+.form-group {
+    margin-bottom: 12px;
+}
 
-        .krathong-options {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: .9rem;
+}
 
-        .krathong-choice {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 8px 4px;
-            text-align: center;
-            color: #fff;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+.krathong-options {
+    display: flex;
+    gap: 10px;
+}
 
-        /* ป้องกันรูปภาพและข้อความด้านในบังการคลิก */
-        .krathong-choice svg,
-        .krathong-choice span {
-            pointer-events: none;
-        }
+.krathong-choice {
+    flex: 1;
+    background: rgba(255,255,255,.1);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    transition: .2s;
+}
 
-        .krathong-choice:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
+.krathong-choice svg,
+.krathong-choice span {
+    pointer-events: none;
+}
 
-        .krathong-choice.active {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.28);
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-        }
+.krathong-choice:hover {
+    background: rgba(255,255,255,.2);
+}
 
-        .krathong-choice span {
-            display: block;
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
+.krathong-choice.active {
+    border-color: #ffd700;
+    background: rgba(255,215,0,.28);
+    box-shadow: 0 0 12px rgba(255,215,0,.4);
+}
 
-        input, textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: none;
-            outline: none;
-            background: rgba(255, 255, 255, 0.95);
-            color: #222;
-            font-size: 0.95rem;
-        }
+.krathong-choice span {
+    display: block;
+    font-size: .8rem;
+    margin-top: 4px;
+}
 
-        .btn-launch {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(45deg, #f39c12, #f1c40f);
-            color: #1a1a2e;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,.95);
+    color: #222;
+    font-size: .95rem;
+}
 
-        .btn-launch:hover {
-            transform: translateY(-2px);
-        }
+textarea {
+    resize: vertical;
+}
 
-        .river {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 36vh;
-            background: linear-gradient(to bottom, #0a2342 0%, #051324 100%);
-            border-top: 2px solid rgba(255, 255, 255, 0.15);
-            z-index: 10;
-            overflow: hidden;
-            pointer-events: none;
-        }
+.btn-launch {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(45deg,#f39c12,#f1c40f);
+    color: #1a1a2e;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .2s;
+}
 
-        .floating-krathong {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: floatAcross 18s linear forwards, bobbing 2.5s ease-in-out infinite;
-            z-index: 15;
-        }
+.btn-launch:hover {
+    transform: translateY(-2px);
+}
 
-        .wish-bubble {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #ffd700;
-            border-radius: 12px;
-            padding: 6px 10px;
-            margin-bottom: 6px;
-            text-align: center;
-            max-width: 220px;
-            font-size: 0.85rem;
-        }
+.btn-launch:active {
+    transform: scale(.97);
+}
 
-        .wish-name {
-            color: #ffd700;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
+.river {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 36vh;
+    min-height: 180px;
+    background: linear-gradient(to bottom,#0a2342 0%,#051324 100%);
+    border-top: 2px solid rgba(255,255,255,.15);
+    z-index: 10;
+    overflow: hidden;
+    pointer-events: none;
+}
 
-        .wish-text {
-            color: #fff;
-            word-wrap: break-word;
-        }
+.river::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 200%;
+    height: 2px;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0 40px,
+        rgba(255,255,255,.15) 40px 90px
+    );
+    animation: water 5s linear infinite;
+}
 
-        @keyframes floatAcross {
-            0% { left: -220px; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { left: 105vw; opacity: 0; }
-        }
+@keyframes water {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100px); }
+}
 
-        @keyframes bobbing {
-            0%, 100% { transform: translateY(0px) rotate(-2deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
-        }
+.floating-krathong {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 220px;
+    animation:
+        floatAcross 18s linear forwards,
+        bobbing 2.5s ease-in-out infinite;
+    z-index: 15;
+}
 
-        .flame {
-            animation: flicker 0.8s infinite alternate;
-            transform-origin: center;
-        }
+.wish-bubble {
+    background: rgba(0,0,0,.7);
+    border: 1px solid #ffd700;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    text-align: center;
+    max-width: 220px;
+    font-size: .85rem;
+}
 
-        @keyframes flicker {
-            0% { transform: scale(1); opacity: 0.9; }
-            100% { transform: scale(1.15); opacity: 1; }
-        }
-    </style>
+.wish-name {
+    color: #ffd700;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.wish-text {
+    color: white;
+    overflow-wrap: anywhere;
+}
+
+@keyframes floatAcross {
+    0% {
+        left: -230px;
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        left: 105vw;
+        opacity: 0;
+    }
+}
+
+@keyframes bobbing {
+    0%,100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.flame {
+    animation: flicker .8s infinite alternate;
+    transform-origin: center;
+}
+
+@keyframes flicker {
+    from {
+        transform: scale(1);
+        opacity: .9;
+    }
+    to {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+@media(max-width:480px) {
+    .moon {
+        width: 55px;
+        height: 55px;
+        top: 15px;
+        right: 20px;
+    }
+
+    .control-panel {
+        margin-top: 15px;
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="moon"></div>
+<div class="moon"></div>
 
-    <div class="control-panel">
-        <h1>ลอยกระทงออนไลน์</h1>
-        
-        <div class="form-group">
-            <label>1. เลือกแบบกระทง</label>
-            <div class="krathong-options">
-                <button type="button" id="opt-banana" class="krathong-choice active" onclick="pickKrathong('banana')">
-                    <svg width="50" height="40" viewBox="0 0 100 80">
-                        <ellipse cx="50" cy="60" rx="40" ry="12" fill="#2ecc71"/>
-                        <polygon points="15,58 30,35 45,58" fill="#27ae60"/>
-                        <polygon points="35,58 50,30 65,58" fill="#2ecc71"/>
-                        <polygon points="55,58 70,35 85,58" fill="#27ae60"/>
-                        <rect x="47" y="18" width="6" height="22" fill="#f1c40f"/>
-                        <circle cx="50" cy="14" r="5" fill="#e67e22"/>
-                    </svg>
-                    <span>ใบตองดั้งเดิม</span>
-                </button>
+<div class="control-panel">
 
-                <button type="button" id="opt-lotus" class="krathong-choice" onclick="pickKrathong('lotus')">
-                    <svg width="50" height="40" viewBox="0 0 100 80">
-                        <ellipse cx="50" cy="62" rx="40" ry="10" fill="#1abc9c"/>
-                        <path d="M20,58 Q30,30 50,58" fill="#ff7979"/>
-                        <path d="M80,58 Q70,30 50,58" fill="#ff7979"/>
-                        <path d="M35,58 Q50,22 65,58" fill="#badc58"/>
-                        <rect x="47" y="18" width="6" height="22" fill="#fff"/>
-                        <circle cx="50" cy="14" r="5" fill="#f39c12"/>
-                    </svg>
-                    <span>กลีบบัวชมพู</span>
-                </button>
+    <h1>🪷 ลอยกระทงออนไลน์ 🪷</h1>
 
-                <button type="button" id="opt-swan" class="krathong-choice" onclick="pickKrathong('swan')">
-                    <svg width="50" height="40" viewBox="0 0 100 80">
-                        <ellipse cx="50" cy="62" rx="42" ry="11" fill="#f39c12"/>
-                        <path d="M25,58 C15,35 35,20 30,45" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
-                        <circle cx="28" cy="24" r="5" fill="#fff"/>
-                        <polygon points="23,24 16,26 23,28" fill="#e74c3c"/>
-                        <rect x="52" y="22" width="6" height="25" fill="#f1c40f"/>
-                        <circle cx="55" cy="18" r="5" fill="#e67e22"/>
-                    </svg>
-                    <span>กระทงหงส์ทอง</span>
-                </button>
-            </div>
+    <div class="form-group">
+        <label>1. เลือกแบบกระทง</label>
+
+        <div class="krathong-options">
+
+            <button type="button"
+                id="opt-banana"
+                class="krathong-choice active"
+                onclick="pickKrathong('banana')">
+
+                <svg width="50" height="40" viewBox="0 0 100 80">
+                    <ellipse cx="50" cy="60" rx="40" ry="12" fill="#2ecc71"/>
+                    <polygon points="15,58 30,35 45,58" fill="#27ae60"/>
+                    <polygon points="35,58 50,30 65,58" fill="#2ecc71"/>
+                    <polygon points="55,58 70,35 85,58" fill="#27ae60"/>
+                    <rect x="47" y="18" width="6" height="22" fill="#f1c40f"/>
+                    <circle cx="50" cy="14" r="5" fill="#e67e22"/>
+                </svg>
+
+                <span>ใบตองดั้งเดิม</span>
+            </button>
+
+            <button type="button"
+                id="opt-lotus"
+                class="krathong-choice"
+                onclick="pickKrathong('lotus')">
+
+                <svg width="50" height="40" viewBox="0 0 100 80">
+                    <ellipse cx="50" cy="62" rx="40" ry="10" fill="#1abc9c"/>
+                    <path d="M20,58 Q30,30 50,58" fill="#ff7979"/>
+                    <path d="M80,58 Q70,30 50,58" fill="#ff7979"/>
+                    <path d="M35,58 Q50,22 65,58" fill="#badc58"/>
+                    <rect x="47" y="18" width="6" height="22" fill="#fff"/>
+                    <circle cx="50" cy="14" r="5" fill="#f39c12"/>
+                </svg>
+
+                <span>กลีบบัวชมพู</span>
+            </button>
+
+            <button type="button"
+                id="opt-swan"
+                class="krathong-choice"
+                onclick="pickKrathong('swan')">
+
+                <svg width="50" height="40" viewBox="0 0 100 80">
+                    <ellipse cx="50" cy="62" rx="42" ry="11" fill="#f39c12"/>
+                    <path d="M25,58 C15,35 35,20 30,45"
+                        stroke="#fff" stroke-width="6"
+                        fill="none" stroke-linecap="round"/>
+                    <circle cx="28" cy="24" r="5" fill="#fff"/>
+                    <polygon points="23,24 16,26 23,28" fill="#e74c3c"/>
+                    <rect x="52" y="22" width="6" height="25" fill="#f1c40f"/>
+                    <circle cx="55" cy="18" r="5" fill="#e67e22"/>
+                </svg>
+
+                <span>กระทงหงส์ทอง</span>
+            </button>
+
         </div>
-
-        <div class="form-group">
-            <label for="userName">2. ชื่อผู้ลอย</label>
-            <input type="text" id="userName" placeholder="พิมพ์ชื่อของคุณ..." maxlength="30">
-        </div>
-
-        <div class="form-group">
-            <label for="userWish">3. คำอธิษฐาน</label>
-            <textarea id="userWish" rows="2" placeholder="ขอให้เรียนเก่งๆ สุขภาพแข็งแรง..." maxlength="100"></textarea>
-        </div>
-
-        <button type="button" class="btn-launch" onclick="launchKrathong()">ปล่อยกระทงลงน้ำ</button>
     </div>
 
-    <div class="river" id="river"></div>
+    <div class="form-group">
+        <label for="userName">2. ชื่อผู้ลอย</label>
+        <input type="text" id="userName"
+            placeholder="พิมพ์ชื่อของคุณ..." maxlength="30">
+    </div>
 
-    <script>
-        var currentType = 'banana';
+    <div class="form-group">
+        <label for="userWish">3. คำอธิษฐาน</label>
+        <textarea id="userWish" rows="2"
+            placeholder="ขอให้เรียนเก่งๆ สุขภาพแข็งแรง..."
+            maxlength="100"></textarea>
+    </div>
 
-        function pickKrathong(type) {
-            currentType = type;
-            document.getElementById('opt-banana').classList.remove('active');
-            document.getElementById('opt-lotus').classList.remove('active');
-            document.getElementById('opt-swan').classList.remove('active');
-            document.getElementById('opt-' + type).classList.add('active');
-        }
+    <button type="button" class="btn-launch"
+        onclick="launchKrathong()">
+        🪷 ปล่อยกระทงลงน้ำ 🪷
+    </button>
 
-        function getKrathongSVG(type) {
-            if (type === 'lotus') {
-                return '<svg width="110" height="90" viewBox="0 0 100 80">' +
-                    '<ellipse cx="50" cy="64" rx="42" ry="11" fill="#16a085"/>' +
-                    '<path d="M15,60 Q28,28 50,60" fill="#ff6b81"/>' +
-                    '<path d="M85,60 Q72,28 50,60" fill="#ff6b81"/>' +
-                    '<path d="M32,60 Q50,20 68,60" fill="#ff9ff3"/>' +
-                    '<rect x="47" y="18" width="6" height="26" fill="#ffffff"/>' +
-                    '<circle class="flame" cx="50" cy="13" r="6" fill="#ffdd59"/>' +
-                    '</svg>';
-            } else if (type === 'swan') {
-                return '<svg width="110" height="90" viewBox="0 0 100 80">' +
-                    '<ellipse cx="50" cy="64" rx="44" ry="12" fill="#f39c12"/>' +
-'' +
-'' +
-'' +
-'' +
-'' +
-'' +
-'';
-} else {
-return '' +
-'' +
-'' +
-'' +
-'' +
-'' +
-'' +
-'' +
-'';
+</div>
+
+<div class="river" id="river"></div>
+
+<script>
+
+let currentType = 'banana';
+
+// เปลี่ยนชนิดกระทง
+function pickKrathong(type) {
+
+    currentType = type;
+
+    document.querySelectorAll('.krathong-choice')
+        .forEach(function(button) {
+            button.classList.remove('active');
+        });
+
+    document.getElementById('opt-' + type)
+        .classList.add('active');
 }
+
+// สร้างรูปกระทง
+function getKrathongSVG(type) {
+
+    if (type === 'lotus') {
+
+        return `
+        <svg width="110" height="90" viewBox="0 0 100 80">
+            <ellipse cx="50" cy="64" rx="42" ry="11" fill="#16a085"/>
+            <path d="M15,60 Q28,28 50,60" fill="#ff6b81"/>
+            <path d="M85,60 Q72,28 50,60" fill="#ff6b81"/>
+            <path d="M32,60 Q50,20 68,60" fill="#ff9ff3"/>
+            <rect x="47" y="18" width="6" height="26" fill="#fff"/>
+            <circle class="flame" cx="50" cy="13" r="6" fill="#ffdd59"/>
+        </svg>`;
+
+    }
+
+    if (type === 'swan') {
+
+        return `
+        <svg width="110" height="90" viewBox="0 0 100 80">
+            <ellipse cx="50" cy="64" rx="44" ry="12" fill="#f39c12"/>
+            <path d="M25,60 C10,40 28,18 32,35 C35,45 25,50 40,58"
+                stroke="#fff" stroke-width="7"
+                fill="none" stroke-linecap="round"/>
+            <circle cx="31" cy="23" r="6" fill="#fff"/>
+            <polygon points="26,23 17,26 26,29" fill="#e74c3c"/>
+            <rect x="52" y="22" width="6" height="25" fill="#f1c40f"/>
+            <circle class="flame" cx="55" cy="17" r="6" fill="#ffdd59"/>
+        </svg>`;
+
+    }
+
+    return `
+    <svg width="110" height="90" viewBox="0 0 100 80">
+        <ellipse cx="50" cy="64" rx="42" ry="12" fill="#2ecc71"/>
+        <polygon points="15,60 30,35 45,60" fill="#27ae60"/>
+        <polygon points="35,60 50,25 65,60" fill="#2ecc71"/>
+        <polygon points="55,60 70,35 85,60" fill="#27ae60"/>
+        <rect x="47" y="18" width="6" height="25" fill="#f1c40f"/>
+        <circle class="flame" cx="50" cy="13" r="6" fill="#ffdd59"/>
+    </svg>`;
 }
+
+// ปล่อยกระทง
 function launchKrathong(customName, customWish) {
-var nameInput = customName || document.getElementById('userName').value.trim() || 'ผู้ไม่ประสงค์ออกนาม';
-var wishInput = customWish || document.getElementById('userWish').value.trim() || 'ขอให้มีความสุขตลอดปี';
-var river = document.getElementById('river');
-var krathong = document.createElement('div');
-krathong.className = 'floating-krathong';
-var randomBottom = Math.floor(Math.random() * 50) + 5;
-krathong.style.bottom = randomBottom + '%';
-var bubble = document.createElement('div');
-bubble.className = 'wish-bubble';
-var nameDiv = document.createElement('div');
-nameDiv.className = 'wish-name';
-nameDiv.textContent = nameInput;
-var wishDiv = document.createElement('div');
-wishDiv.className = 'wish-text';
-wishDiv.textContent = '"' + wishInput + '"';
-bubble.appendChild(nameDiv);
-bubble.appendChild(wishDiv);
-var svgContainer = document.createElement('div');
-svgContainer.innerHTML = getKrathongSVG(currentType);
-krathong.appendChild(bubble);
-krathong.appendChild(svgContainer);
-river.appendChild(krathong);
-setTimeout(function() {
-krathong.remove();
-}, 18000);
-if (!customWish) {
-document.getElementById('userWish').value = '';
-}
-}
-window.onload = function() {
-setTimeout(function() {
-launchKrathong('ตัวอย่าง', 'สุขสันต์วันลอยกระทงครับ');
-}, 600);
-};
 
+    const nameInput = customName ||
+        document.getElementById('userName').value.trim() ||
+        'ผู้ไม่ประสงค์ออกนาม';
 
+    const wishInput = customWish ||
+        document.getElementById('userWish').value.trim() ||
+        'ขอให้มีความสุขตลอดปี';
+
+    const river = document.getElementById('river');
+
+    const krathong = document.createElement('div');
+    krathong.className = 'floating-krathong';
+
+    const randomBottom = Math.floor(Math.random() * 50) + 5;
+    krathong.style.bottom = randomBottom + '%';
+
+    // กล่องคำอธิษฐาน
+    const bubble = document.createElement('div');
+    bubble.className = 'wish-bubble';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'wish-name';
+    nameDiv.textContent = nameInput;
+
+    const wishDiv = document.createElement('div');
+    wishDiv.className = 'wish-text';
+    wishDiv.textContent = '"' + wishInput + '"';
+
+    bubble.appendChild(nameDiv);
+    bubble.appendChild(wishDiv);
+
+    // รูปกระทง
+    const svgContainer = document.createElement('div');
+    svgContainer.innerHTML = getKrathongSVG(currentType);
+
+    krathong.appendChild(bubble);
+    krathong.appendChild(svgContainer);
+
+    river.appendChild(krathong);
+
+    // ลบกระทงหลังลอยครบ 18 วินาที
+    setTimeout(function() {
+        krathong.remove();
+    }, 18000);
+
+    // ล้างช่องคำอธิษฐาน
+    if (!customWish) {
+        document.getElementById('userWish').value = '';
+    }
+}
+
+// กระทงตัวอย่างเมื่อเปิดเว็บไซต์
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        launchKrathong('ตัวอย่าง', 'สุขสันต์วันลอยกระทงครับ');
+    }, 600);
+});
+
+</script>
+
+</body>
+</html>
