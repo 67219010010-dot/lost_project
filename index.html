@@ -38,7 +38,7 @@
 
         .control-panel {
             position: relative;
-            background: rgba(20, 30, 55, 0.85);
+            background: rgba(20, 30, 55, 0.88);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 20px;
@@ -81,9 +81,15 @@
             border-radius: 12px;
             padding: 8px 4px;
             text-align: center;
+            color: #fff;
             cursor: pointer;
             transition: 0.2s;
-            user-select: none;
+        }
+
+        /* ป้องกันรูปภาพและข้อความด้านในบังการคลิก */
+        .krathong-choice svg,
+        .krathong-choice span {
+            pointer-events: none;
         }
 
         .krathong-choice:hover {
@@ -92,7 +98,8 @@
 
         .krathong-choice.active {
             border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.25);
+            background: rgba(255, 215, 0, 0.28);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
         }
 
         .krathong-choice span {
@@ -112,7 +119,7 @@
             font-size: 0.95rem;
         }
 
-        button {
+        .btn-launch {
             width: 100%;
             padding: 12px;
             border: none;
@@ -125,12 +132,8 @@
             transition: transform 0.2s;
         }
 
-        button:hover {
+        .btn-launch:hover {
             transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: scale(0.98);
         }
 
         .river {
@@ -210,7 +213,7 @@
         <div class="form-group">
             <label>1. เลือกแบบกระทง</label>
             <div class="krathong-options">
-                <div class="krathong-choice active" data-type="banana">
+                <button type="button" id="opt-banana" class="krathong-choice active" onclick="pickKrathong('banana')">
                     <svg width="50" height="40" viewBox="0 0 100 80">
                         <ellipse cx="50" cy="60" rx="40" ry="12" fill="#2ecc71"/>
                         <polygon points="15,58 30,35 45,58" fill="#27ae60"/>
@@ -220,9 +223,9 @@
                         <circle cx="50" cy="14" r="5" fill="#e67e22"/>
                     </svg>
                     <span>ใบตองดั้งเดิม</span>
-                </div>
+                </button>
 
-                <div class="krathong-choice" data-type="lotus">
+                <button type="button" id="opt-lotus" class="krathong-choice" onclick="pickKrathong('lotus')">
                     <svg width="50" height="40" viewBox="0 0 100 80">
                         <ellipse cx="50" cy="62" rx="40" ry="10" fill="#1abc9c"/>
                         <path d="M20,58 Q30,30 50,58" fill="#ff7979"/>
@@ -232,9 +235,9 @@
                         <circle cx="50" cy="14" r="5" fill="#f39c12"/>
                     </svg>
                     <span>กลีบบัวชมพู</span>
-                </div>
+                </button>
 
-                <div class="krathong-choice" data-type="swan">
+                <button type="button" id="opt-swan" class="krathong-choice" onclick="pickKrathong('swan')">
                     <svg width="50" height="40" viewBox="0 0 100 80">
                         <ellipse cx="50" cy="62" rx="42" ry="11" fill="#f39c12"/>
                         <path d="M25,58 C15,35 35,20 30,45" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
@@ -244,7 +247,7 @@
                         <circle cx="55" cy="18" r="5" fill="#e67e22"/>
                     </svg>
                     <span>กระทงหงส์ทอง</span>
-                </div>
+                </button>
             </div>
         </div>
 
@@ -258,40 +261,37 @@
             <textarea id="userWish" rows="2" placeholder="ขอให้เรียนเก่งๆ สุขภาพแข็งแรง..." maxlength="100"></textarea>
         </div>
 
-        <button type="button" id="launchBtn">ปล่อยกระทงลงน้ำ</button>
+        <button type="button" class="btn-launch" onclick="launchKrathong()">ปล่อยกระทงลงน้ำ</button>
     </div>
 
     <div class="river" id="river"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let selectedType = 'banana';
+        var currentType = 'banana';
 
-            // ระบบคลิกเลือกกระทง
-            const choices = document.querySelectorAll('.krathong-choice');
-            choices.forEach(function(choice) {
-                choice.addEventListener('click', function() {
-                    choices.forEach(function(c) { c.classList.remove('active'); });
-                    this.classList.add('active');
-                    selectedType = this.getAttribute('data-type');
-                });
-            });
+        function pickKrathong(type) {
+            currentType = type;
+            document.getElementById('opt-banana').classList.remove('active');
+            document.getElementById('opt-lotus').classList.remove('active');
+            document.getElementById('opt-swan').classList.remove('active');
+            document.getElementById('opt-' + type).classList.add('active');
+        }
 
-            function getKrathongSVG(type) {
-                if (type === 'lotus') {
-                    return '<svg width="110" height="90" viewBox="0 0 100 80">' +
-                        '<ellipse cx="50" cy="64" rx="42" ry="11" fill="#16a085"/>' +
-                        '<path d="M15,60 Q28,28 50,60" fill="#ff6b81"/>' +
-                        '<path d="M85,60 Q72,28 50,60" fill="#ff6b81"/>' +
-                        '<path d="M32,60 Q50,20 68,60" fill="#ff9ff3"/>' +
-                        '<rect x="47" y="18" width="6" height="26" fill="#ffffff"/>' +
-                        '<circle class="flame" cx="50" cy="13" r="6" fill="#ffdd59"/>' +
-                        '</svg>';
-                } else if (type === 'swan') {
-                    return '<svg width="110" height="90" viewBox="0 0 100 80">' +
-                        '<ellipse cx="50" cy="64" rx="44" ry="12" fill="#f39c12"/>' +
-                        '<path d="M25,60 C12,35 35,18 30,46" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>' +
-                        '<circle cx="28" cy="23" r="6" fill="#ffffff"/>' +
+        function getKrathongSVG(type) {
+            if (type === 'lotus') {
+                return '<svg width="110" height="90" viewBox="0 0 100 80">' +
+                    '<ellipse cx="50" cy="64" rx="42" ry="11" fill="#16a085"/>' +
+                    '<path d="M15,60 Q28,28 50,60" fill="#ff6b81"/>' +
+                    '<path d="M85,60 Q72,28 50,60" fill="#ff6b81"/>' +
+                    '<path d="M32,60 Q50,20 68,60" fill="#ff9ff3"/>' +
+                    '<rect x="47" y="18" width="6" height="26" fill="#ffffff"/>' +
+                    '<circle class="flame" cx="50" cy="13" r="6" fill="#ffdd59"/>' +
+                    '</svg>';
+            } else if (type === 'swan') {
+                return '<svg width="110" height="90" viewBox="0 0 100 80">' +
+                    '<ellipse cx="50" cy="64" rx="44" ry="12" fill="#f39c12"/>' +
+'' +
+'' +
 '' +
 '' +
 '' +
@@ -310,25 +310,25 @@ return '' +
 }
 }
 function launchKrathong(customName, customWish) {
-const nameInput = customName || document.getElementById('userName').value.trim() || 'ผู้ไม่ประสงค์ออกนาม';
-const wishInput = customWish || document.getElementById('userWish').value.trim() || 'ขอให้มีความสุขตลอดปี';
-const river = document.getElementById('river');
-const krathong = document.createElement('div');
+var nameInput = customName || document.getElementById('userName').value.trim() || 'ผู้ไม่ประสงค์ออกนาม';
+var wishInput = customWish || document.getElementById('userWish').value.trim() || 'ขอให้มีความสุขตลอดปี';
+var river = document.getElementById('river');
+var krathong = document.createElement('div');
 krathong.className = 'floating-krathong';
-const randomBottom = Math.floor(Math.random() * 50) + 5;
+var randomBottom = Math.floor(Math.random() * 50) + 5;
 krathong.style.bottom = randomBottom + '%';
-const bubble = document.createElement('div');
+var bubble = document.createElement('div');
 bubble.className = 'wish-bubble';
-const nameDiv = document.createElement('div');
+var nameDiv = document.createElement('div');
 nameDiv.className = 'wish-name';
 nameDiv.textContent = nameInput;
-const wishDiv = document.createElement('div');
+var wishDiv = document.createElement('div');
 wishDiv.className = 'wish-text';
 wishDiv.textContent = '"' + wishInput + '"';
 bubble.appendChild(nameDiv);
 bubble.appendChild(wishDiv);
-const svgContainer = document.createElement('div');
-svgContainer.innerHTML = getKrathongSVG(selectedType);
+var svgContainer = document.createElement('div');
+svgContainer.innerHTML = getKrathongSVG(currentType);
 krathong.appendChild(bubble);
 krathong.appendChild(svgContainer);
 river.appendChild(krathong);
@@ -339,13 +339,10 @@ if (!customWish) {
 document.getElementById('userWish').value = '';
 }
 }
-// ระบบคลิกปุ่มปล่อยกระทง
-const launchBtn = document.getElementById('launchBtn');
-launchBtn.addEventListener('click', function() {
-launchKrathong();
-});
-// ปล่อยกระทงตัวอย่างตอนเปิดหน้าเว็บ
+window.onload = function() {
 setTimeout(function() {
 launchKrathong('ตัวอย่าง', 'สุขสันต์วันลอยกระทงครับ');
 }, 600);
-});
+};
+
+
